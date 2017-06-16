@@ -1,28 +1,26 @@
-# UseCaseService
+# Use Case Service
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.1.1.
+NgRx is a great way to manage the state of Angular applications. It is akin to event sourcing and provides nice properties. But as with event sourcing, it may not be the best option for all domain or may be too unfamiliar for certain teams.
 
-## Development server
+You can get a lot of benefits of NgRx in a more a la carte fashion if you use the approached shown in this repo.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+NgRx clearly separates your code into the following:
 
-## Code scaffolding
+- UI (components)
+- State management (reducers)
+- Side effects and coordination (effects classes)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|module`.
+The approach in this repo separates your code into the following:
 
-## Build
+- UI (components)
+- State management and side effects (use case services)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Ads you can see AppComponent merely subscribes to the observables provided by the service, and invokes actions. It doesn't know how to communicate to the backend or the state is stored locally.
 
-## Running unit tests
+TodosServices manages the use case of completing and adding todos. Here we are using observables (similar to how it is done in ngrx/Effects) to implement coordination (e.g., we are using concatMap there).
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+TodosRepository is extracted to show that we can factor out certain low-level things as talking to the service. The use case service doesn't have to worry about them. In simple cases those two can be merged.
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+What's nice about this approach is that:
+- Our components are simple. They only manage UI.
+- The use case service can implement coordination. It doesn't handle any UI stuff. So it is easier to test in isolation. Because we have one instance of the use case service per app, it is easier to implement data caching etc.
